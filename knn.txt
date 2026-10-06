@@ -1,0 +1,31 @@
+import numpy as np, pandas as pd, matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_split, GridSearchCV
+from sklearn.neighbors import KNeighborsClassifier as KNN
+from sklearn.metrics import *
+plt.style.use('ggplot')
+
+df = pd.read_csv(r"C:\Users\User\Downloads\diabetes.csv")
+display(df.head(), df.shape, df.dtypes)
+
+x, y = df.iloc[:,:-1].values, df.Outcome.values
+xtr, xte, ytr, yte = train_test_split(x, y, test_size=0.4, random_state=42, stratify=y)
+
+k = np.arange(1, 9)
+m = [KNN(n_neighbors=i).fit(xtr, ytr) for i in k]
+plt.plot(k, [a.score(xte, yte) for a in m], label='Testing Accuracy')
+plt.plot(k, [a.score(xtr, ytr) for a in m], label='Training accuracy')
+plt.legend(); plt.gca().set(title='k-NN Varying number of neighbors', xlabel='Number of neighbors', ylabel='Accuracy')
+plt.show()
+
+knn = KNN(n_neighbors=7).fit(xtr, ytr)
+yp, pr = knn.predict(xte), knn.predict_proba(xte)[:,1]
+display(knn, knn.score(xte, yte), confusion_matrix(yte, yp))
+print(classification_report(yte, yp))
+
+fpr, tpr, _ = roc_curve(yte, pr)
+plt.plot([0,1], [0,1], 'k--'); plt.plot(fpr, tpr, label='Knn')
+plt.gca().set(xlabel='fpr', ylabel='tpr', title='Knn(n_neighbors=7) ROC curve')
+plt.show()
+
+g = GridSearchCV(KNN(), {'n_neighbors': np.arange(1,50)}, cv=5).fit(x, y)
+display(roc_auc_score(yte, pr), g, g.best_score_, g.best_params_)

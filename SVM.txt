@@ -1,0 +1,61 @@
+# ===== Cell 1 [code] =====
+import matplotlib.pyplot as plt
+from sklearn.datasets import make_classification
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.svm import SVC
+from sklearn.metrics import ConfusionMatrixDisplay, classification_report
+from sklearn.inspection import DecisionBoundaryDisplay
+
+X, y = make_classification(n_samples=300, n_features=2, n_redundant=0,
+                           n_informative=2, n_clusters_per_class=1, random_state=42)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25, random_state=42)
+
+scaler = StandardScaler()
+X_train = scaler.fit_transform(X_train)
+X_test = scaler.transform(X_test)
+
+svm = SVC(kernel='linear', random_state=42).fit(X_train, y_train)
+y_pred = svm.predict(X_test)
+
+print("Accuracy:", round(svm.score(X_test, y_test) * 100, 2), "%")
+print("\nClassification Report")
+print(classification_report(y_test, y_pred))
+
+# Confusion matrix
+fig, ax = plt.subplots(figsize=(5, 4))
+ConfusionMatrixDisplay.from_predictions(y_test, y_pred, display_labels=['Class0', 'Class1'],
+                                        cmap='Blues', ax=ax)
+ax.set_xlabel("Predicted Label")
+ax.set_ylabel("True Label")
+ax.set_title("Confusion Matrix")
+plt.show()
+
+# Decision boundary
+fig, ax = plt.subplots(figsize=(8, 6))
+DecisionBoundaryDisplay.from_estimator(svm, X_train, response_method="predict",
+                                       plot_method="contour", alpha=0.3,
+                                       cmap='coolwarm', ax=ax)
+ax.scatter(X_train[:, 0], X_train[:, 1], c=y_train, cmap='coolwarm', edgecolors='k')
+ax.set_xlabel("Feature 1")
+ax.set_ylabel("Feature 2")
+plt.show()
+# ----- Output of Cell 1 -----
+Accuracy: 97.33 %
+
+Classification Report
+              precision    recall  f1-score   support
+
+           0       0.97      0.97      0.97        36
+           1       0.97      0.97      0.97        39
+
+    accuracy                           0.97        75
+   macro avg       0.97      0.97      0.97        75
+weighted avg       0.97      0.97      0.97        75
+
+
+<Figure size 500x400 with 2 Axes>
+<Figure size 800x600 with 1 Axes>
+
+# ===== Cell 2 [code] =====
+

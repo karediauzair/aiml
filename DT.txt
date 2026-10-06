@@ -1,0 +1,29 @@
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+PlayTennis = pd.read_csv(r"C:\Users\Talha Chougle\Downloads\PlayTennis.csv")
+print(PlayTennis)
+from sklearn.preprocessing import LabelEncoder
+le = LabelEncoder()
+PlayTennis['Outlook'] = le.fit_transform(PlayTennis['Outlook'])
+PlayTennis['Temperature'] = le.fit_transform(PlayTennis['Temperature'])
+PlayTennis['Humidity'] = le.fit_transform(PlayTennis['Humidity'])
+PlayTennis['Wind'] = le.fit_transform(PlayTennis['Wind'])
+PlayTennis['Play Tennis'] = le.fit_transform(PlayTennis['Play Tennis'])
+PlayTennis
+y = PlayTennis['Play Tennis']
+x = PlayTennis.drop(['Play Tennis'], axis = 1)
+from sklearn import tree
+clf = tree.DecisionTreeClassifier(criterion='entropy')
+clf = clf.fit(x, y)
+tree.plot_tree(clf)
+import graphviz
+from sklearn import tree
+dot_data = tree.export_graphviz(clf, out_file = None)
+graph = graphviz.Source(dot_data)
+graph = graphviz.Source(dot_data)
+graph
+x_pred = clf.predict(x)
+x_pred == y
+plt.plot([1, 2, 3])
+plt.show()

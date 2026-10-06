@@ -1,0 +1,27 @@
+import numpy as np
+
+np.random.seed(1)
+w = 2*np.random.random((3,1)) - 1
+print("Beginning Randomly Generated Weights:")
+print(w)
+
+X = np.array([[0,0,1],[1,1,1],[1,0,1],[0,1,1]])
+y = np.array([[0,1,1,0]]).T
+sig = lambda x: 1/(1+np.exp(-x))
+
+for i in range(15000):
+    o = sig(X @ w)
+    w += X.T @ ((y-o) * o*(1-o))
+
+print("\nEnding Weights After Training:")
+print(w)
+
+n = np.array([int(input(f"{p} (0 or 1): ")) for p in
+              ("\nUser Input One", "User Input Two", "User Input Three")])
+print("\nConsidering New Situation:")
+print(n)
+
+o = sig(n @ w)
+print("\nNew Output Data:")
+print(o)
+print("Predicted Output:", int(o[0] >= 0.5))

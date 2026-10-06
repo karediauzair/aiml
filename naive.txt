@@ -1,0 +1,33 @@
+import pandas as pd, seaborn as sns, matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_split
+from sklearn.naive_bayes import MultinomialNB, CategoricalNB, GaussianNB
+from sklearn.metrics import *
+from sklearn.preprocessing import LabelEncoder
+
+df = pd.read_csv(r"C:\Users\User\Downloads\disease.csv")
+display(df.head(11))
+df.info()
+
+df = df.apply(LabelEncoder().fit_transform)
+df.info()
+display(df.head(11))
+
+for c in ['Sore Throat','Fever','Congestion','Headache','Swollen Glands','Diagnosis']:
+    plt.figure(figsize=(6,6))
+    sns.countplot(x=c, data=df, hue=c, palette='tab10', legend=False)
+    plt.title(f"category wise count of '{c}'")
+    plt.show()
+
+X, y = df.iloc[:,:-1], df['Diagnosis']
+for m in (MultinomialNB, CategoricalNB, GaussianNB):
+    display(m().fit(X,y))
+
+a, b, c, d = train_test_split(X, y, test_size=0.2, random_state=4)
+p = MultinomialNB().fit(a,c).predict(b)
+
+print("confusion matrix\n", confusion_matrix(d,p))
+print("Accuracy:", accuracy_score(d,p))
+print("Precision:", precision_score(d,p,average='macro'))
+print("Recall:", recall_score(d,p,average='macro'))
+print("F1 score:", f1_score(d,p,average='macro'))
+print("Classification report:\n", classification_report(d,p))
